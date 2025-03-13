@@ -1,0 +1,47 @@
+registry: "gcr.io/datadoghq"
+
+targetSystem: "linux"
+
+datadog:
+  clusterName: "vitor-m"
+  apiKeyExistingSecret: "datadog-secret"
+  site: "datadoghq.com"
+  tags:
+    - "env:prod"
+
+  # Process collection
+  processAgent:
+    enabled: true
+    processCollection: true
+
+  # Logs collection
+  logs:
+    enabled: true
+    containerCollectAll: false
+
+  # Orchestrator Explorer
+  orchestratorExplorer:
+    enabled: true
+
+  # APM Configuration
+  apm:
+    portEnabled: true
+    
+  clusterAgent:
+    enabled: true
+    admissionController:
+      enabled: true
+      configMode: service
+      mutateUnlabelled: true
+    confd:
+      sqlserver.yaml: |
+        cluster_check: true
+        init_config:
+        instances:
+          - dbm: true
+            host: "<HOSTNAME>"
+            port: <SQL_PORT>
+            username: "datadog"
+            password: "ENC[<DATADOG_USER_DATABASE_PASSWORD>]"
+            connector: "odbc"
+            driver: "FreeTDS"

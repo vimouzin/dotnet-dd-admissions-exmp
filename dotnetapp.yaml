@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-deployment
+  labels:
+    app: helloworld
+    admission.datadoghq.com/enabled: "true" 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        ad.datadoghq.com/helloworld.logs: '[{"source":"dotnet","service":"helloworld-dotnet"}]'
+        admission.datadoghq.com/dotnet-lib.version: "latest"
+    spec:
+      containers:
+        - name: helloworld
+          image: mcr.microsoft.com/dotnet/samples:aspnetapp  # A pre-built .NET sample image
+          env:
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_SERVICE
+              value: "helloworld-dotnet"
+            - name: DD_ENV
+              value: "prod"
+            - name: DD_RUNTIME_METRICS_ENABLED
+              value: "true"
+              
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-service
+spec:
+  selector:
+    app: helloworld
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

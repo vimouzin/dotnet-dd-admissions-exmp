@@ -17,7 +17,7 @@ spec:
         admission.datadoghq.com/enabled: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
-        ad.datadoghq.com/helloworld.logs: '[{"source":"dotnet","service":"helloworld-dotnet"}]'
+        ad.datadoghq.com/helloworld.logs: '[{"source":"csharp","service":"helloworld-dotnet"}]'
         admission.datadoghq.com/dotnet-lib.version: "latest"
     spec:
       containers:
